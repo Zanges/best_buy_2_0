@@ -3,6 +3,7 @@ import pytest
 from products import Product
 
 
+@pytest.mark.dependency(name="test_correct_product")
 def test_correct_product():
     product = Product("Test Product", 10, 5)
     assert product.name == "Test Product"
@@ -11,31 +12,37 @@ def test_correct_product():
     assert product.active == True
 
 
+@pytest.mark.dependency(depends=["test_correct_product"])
 def test_zero_quantity():
     product = Product("Test Product", 10, 0)
     assert product.active == False
 
 
+@pytest.mark.dependency(depends=["test_correct_product"])
 def test_negative_price():
     with pytest.raises(ValueError, match="Price must be non-negative"):
         product = Product("Test Product", -10, 5)
 
 
+@pytest.mark.dependency(depends=["test_correct_product"])
 def test_negative_quantity():
     with pytest.raises(ValueError, match="Quantity must be non-negative"):
         product = Product("Test Product", 10, -5)
 
 
+@pytest.mark.dependency(depends=["test_correct_product"])
 def test_empty_name():
     with pytest.raises(ValueError, match="Name must be a non empty string"):
         product = Product("", 10, 5)
 
 
+@pytest.mark.dependency(depends=["test_correct_product"])
 def test_price_not_number():
     with pytest.raises(ValueError, match="Price must be a number"):
         product = Product("Test Product", "10", 5)
 
 
+@pytest.mark.dependency(depends=["test_correct_product"])
 def test_quantity_not_integer():
     with pytest.raises(ValueError, match="Quantity must be an integer"):
         product = Product("Test Product", 10, 5.5)
