@@ -1,7 +1,7 @@
 import pytest
 
 from store import Store
-from products import Product, NonStockedProduct
+from products import Product, NonStockedProduct, LimitedProduct
 
 
 # test dependency is not working here
@@ -118,3 +118,12 @@ def test_order_with_non_stocked_product():
     product2 = NonStockedProduct("Test Product 2", 20)
     store = Store([product1, product2])
     assert store.order([(product1, 2), (product2, 3)]) == 80
+
+
+def test_store_with_limited_product(capsys):
+    product1 = Product("Test Product 1", 10, 5)
+    product2 = LimitedProduct("Test Product 2", 20, 15, 5)
+    store = Store([product1, product2])
+    store.order([(product2, 6)])
+    printed = capsys.readouterr()
+    assert printed.out == "Error buying Test Product 2, Price: 20, Quantity: 15, Limit: 5: Quantity must be less than or equal to 5\n"

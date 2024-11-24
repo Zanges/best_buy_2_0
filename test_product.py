@@ -2,7 +2,7 @@ import sys
 
 import pytest
 
-from products import Product, NonStockedProduct
+from products import Product, NonStockedProduct, LimitedProduct
 
 
 @pytest.mark.dependency(name="test_correct_product")
@@ -196,3 +196,59 @@ def test_non_stocked_product_show():
     product = NonStockedProduct("Test Product", 10)
     assert product.show() == "Test Product, Price: 10, Quantity: ∞"
     assert product.show() == str(product)
+
+
+def test_limited_product():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    assert product.name == "Test Product"
+    assert product.price == 10
+    assert product.quantity == 5
+    assert product.active == True
+    assert product.limit == 10
+
+
+def test_limited_product_buy():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    assert product.buy(5) == 50
+    assert product.quantity == 0
+    assert product.active == False
+
+
+def test_limited_product_buy_more_than_limit():
+    product = LimitedProduct("Test Product", 10, 50, 10)
+    with pytest.raises(ValueError, match="Quantity must be less than or equal to 10"):
+        product.buy(11)
+
+
+def test_limited_product_str():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    assert str(product) == "Test Product, Price: 10, Quantity: 5, Limit: 10"
+
+
+def test_limited_product_show():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    assert product.show() == "Test Product, Price: 10, Quantity: 5, Limit: 10"
+    assert product.show() == str(product)
+
+
+def test_limited_product_set_limit():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    product.set_limit(20)
+    assert product.limit == 20
+
+
+def test_limited_product_set_limit_negative():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    with pytest.raises(ValueError, match="Limit must be non-negative"):
+        product.set_limit(-20)
+
+
+def test_limited_product_set_limit_not_integer():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    with pytest.raises(ValueError, match="Limit must be an integer"):
+        product.set_limit(20.5)
+
+
+def test_get_quantity_limited_product():
+    product = LimitedProduct("Test Product", 10, 5, 10)
+    assert product.get_quantity() == 5

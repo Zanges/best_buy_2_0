@@ -112,6 +112,50 @@ class NonStockedProduct(Product):
         return f"{self.name}, Price: {self.price}, Quantity: ∞"
 
 
+class LimitedProduct(Product):
+    def __init__(self, name: str, price: float, quantity: int, limit: int) -> None:
+        """
+        Constructor for the LimitedProduct class
+
+        :param name:
+        :param price:
+        :param quantity:
+        :param limit:
+        """
+        if not isinstance(limit, int):
+            raise ValueError("Limit must be an integer")
+        if limit < 0:
+            raise ValueError("Limit must be non-negative")
+        super().__init__(name, price, quantity)
+        self.limit = limit
+
+    def buy(self, quantity: int) -> float:
+        """
+        Buys the product and returns the total cost
+        :param quantity: int: Quantity of the product to buy
+        :return: float: Total cost of the product
+        """
+        if quantity > self.limit:
+            raise ValueError(f"Quantity must be less than or equal to {self.limit}")
+        return super().buy(quantity)
+
+    def __str__(self) -> str:
+        """ Returns the string representation of the product """
+        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Limit: {self.limit}"
+
+    def set_limit(self, limit: int) -> None:
+        """ Sets the limit of the product """
+        if not isinstance(limit, int):
+            raise ValueError("Limit must be an integer")
+        if limit <= 0:
+            raise ValueError("Limit must be non-negative")
+        self.limit = limit
+
+    def get_limit(self) -> int:
+        """ Returns the limit of the product """
+        return self.limit
+
+
 def main():
     bose = Product("Bose QuietComfort Earbuds", price=250, quantity=500)
     mac = Product("MacBook Air M2", price=1450, quantity=100)
