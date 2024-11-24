@@ -1,3 +1,7 @@
+import math
+import sys
+
+
 class Product:
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
@@ -74,6 +78,38 @@ class Product:
             raise ValueError("Not enough quantity in stock")
         self.set_quantity(self.quantity - quantity)
         return self.price * quantity
+
+
+class NonStockedProduct(Product):
+    def __init__(self, name: str, price: float) -> None:
+        """
+        Constructor for the NonStockedProduct class
+
+        :param name:
+        :param price:
+        """
+        super().__init__(name, price, sys.maxsize) # not sure if sys.maxsize is the best way to represent infinity
+        self.active = True
+
+    def set_quantity(self, quantity: int) -> None:
+        """ Raises an error as quantity cannot be set for non stocked product """
+        raise ValueError("Cannot set quantity for non stocked product")
+
+    def buy(self, quantity: int) -> float:
+        """
+        Buys the product and returns the total cost
+        :param quantity: int: Quantity of the product to buy
+        :return: float: Total cost of the product
+        """
+        if not isinstance(quantity, int):
+            raise ValueError("Quantity must be an integer")
+        if quantity < 0:
+            raise ValueError("Quantity must be non-negative")
+        return self.price * quantity
+
+    def __str__(self) -> str:
+        """ Returns the string representation of the product """
+        return f"{self.name}, Price: {self.price}, Quantity: ∞"
 
 
 def main():

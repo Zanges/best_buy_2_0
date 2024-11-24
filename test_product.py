@@ -1,6 +1,8 @@
+import sys
+
 import pytest
 
-from products import Product
+from products import Product, NonStockedProduct
 
 
 @pytest.mark.dependency(name="test_correct_product")
@@ -130,3 +132,67 @@ def test_buy_more_than_quantity():
     product = Product("Test Product", 10, 5)
     with pytest.raises(ValueError, match="Not enough quantity in stock"):
         product.buy(6)
+
+
+def test_buy_negative_quantity():
+    product = Product("Test Product", 10, 5)
+    with pytest.raises(ValueError, match="Quantity must be non-negative"):
+        product.buy(-5)
+
+
+def test_buy_not_integer():
+    product = Product("Test Product", 10, 5)
+    with pytest.raises(ValueError, match="Quantity must be an integer"):
+        product.buy(5.5)
+
+
+def test_non_stocked_product():
+    product = NonStockedProduct("Test Product", 10)
+    assert product.name == "Test Product"
+    assert product.price == 10
+    assert product.quantity == sys.maxsize
+    assert product.active == True
+
+
+def test_non_stocked_product_set_quantity():
+    product = NonStockedProduct("Test Product", 10)
+    with pytest.raises(ValueError, match="Cannot set quantity for non stocked product"):
+        product.set_quantity(5)
+    assert product.quantity == sys.maxsize
+    assert product.active == True
+
+
+def test_non_stocked_product_buy():
+    product = NonStockedProduct("Test Product", 10)
+    assert product.buy(5) == 50
+    assert product.quantity == sys.maxsize
+    assert product.active == True
+    assert product.buy(10) == 100
+    assert product.quantity == sys.maxsize
+    assert product.active == True
+    assert product.buy(10**10) == 10**11
+    assert product.quantity == sys.maxsize
+    assert product.active == True
+
+
+def test_non_stocked_product_buy_negative_quantity():
+    product = NonStockedProduct("Test Product", 10)
+    with pytest.raises(ValueError, match="Quantity must be non-negative"):
+        product.buy(-5)
+
+
+def test_non_stocked_product_buy_not_integer():
+    product = NonStockedProduct("Test Product", 10)
+    with pytest.raises(ValueError, match="Quantity must be an integer"):
+        product.buy(5.5)
+
+
+def test_non_stocked_product_str():
+    product = NonStockedProduct("Test Product", 10)
+    assert str(product) == "Test Product, Price: 10, Quantity: ∞"
+
+
+def test_non_stocked_product_show():
+    product = NonStockedProduct("Test Product", 10)
+    assert product.show() == "Test Product, Price: 10, Quantity: ∞"
+    assert product.show() == str(product)

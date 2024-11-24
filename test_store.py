@@ -1,7 +1,7 @@
 import pytest
 
 from store import Store
-from products import Product
+from products import Product, NonStockedProduct
 
 
 # test dependency is not working here
@@ -88,3 +88,33 @@ def test_order_not_enough_quantity(capsys):
     assert store.order([(product1, 2), (product2, 3)]) == 60
     printed = capsys.readouterr()
     assert printed.out == "Error buying Test Product 1, Price: 10, Quantity: 1: Not enough quantity in stock\n"
+
+
+def test_store_with_non_product():
+    with pytest.raises(ValueError, match="All elements of products must be of type Product"):
+        Store([1, 2, 3])
+
+
+def test_add_product_with_non_product():
+    store = Store([])
+    with pytest.raises(ValueError, match="Product must be of type Product"):
+        store.add_product(1)
+
+
+def test_remove_product_with_non_product():
+    store = Store([])
+    with pytest.raises(ValueError, match="Product must be of type Product"):
+        store.remove_product(1)
+
+
+def test_order_with_non_product():
+    store = Store([])
+    with pytest.raises(ValueError, match="Product does not exist in the store"):
+        store.order([(1, 2), (2, 3)])
+
+
+def test_order_with_non_stocked_product():
+    product1 = Product("Test Product 1", 10, 5)
+    product2 = NonStockedProduct("Test Product 2", 20)
+    store = Store([product1, product2])
+    assert store.order([(product1, 2), (product2, 3)]) == 80
