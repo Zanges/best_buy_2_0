@@ -109,7 +109,7 @@ class NonStockedProduct(Product):
 
     def __str__(self) -> str:
         """ Returns the string representation of the product """
-        return f"{self.name}, Price: {self.price}, Quantity: ∞"
+        return f"{super().__str__()}, Quantity: ∞"
 
 
 class LimitedProduct(Product):
@@ -141,7 +141,7 @@ class LimitedProduct(Product):
 
     def __str__(self) -> str:
         """ Returns the string representation of the product """
-        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Limit: {self.limit}"
+        return f"{super().__str__()}, Limit: {self.limit}"
 
     def set_limit(self, limit: int) -> None:
         """ Sets the limit of the product """
