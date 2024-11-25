@@ -1,9 +1,9 @@
-import math
 import sys
+
+from promotion import Promotion
 
 
 class Product:
-
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
         Constructor for the Product class
@@ -26,6 +26,7 @@ class Product:
         self.price = price
         self.quantity = quantity
         self.active = False if quantity == 0 else True
+        self.promotion = None
 
     def get_quantity(self) -> float: # Not sure why the documentation says it should return float. I think quantity should be an integer
         """ Returns the quantity of the product """
@@ -55,7 +56,7 @@ class Product:
 
     def __str__(self) -> str:
         """ Returns the string representation of the product """
-        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Promotion: {self.promotion}"
 
     def show(self) -> str:
         """
@@ -77,7 +78,17 @@ class Product:
         if quantity > self.quantity:
             raise ValueError("Not enough quantity in stock")
         self.set_quantity(self.quantity - quantity)
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
         return self.price * quantity
+
+    def set_promotion(self, promotion: Promotion) -> None:
+        """ Sets the promotion for the product """
+        self.promotion = promotion
+
+    def get_promotion(self) -> Promotion or None:
+        """ Returns the promotion for the product """
+        return self.promotion
 
 
 class NonStockedProduct(Product):
@@ -105,11 +116,15 @@ class NonStockedProduct(Product):
             raise ValueError("Quantity must be an integer")
         if quantity < 0:
             raise ValueError("Quantity must be non-negative")
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
         return self.price * quantity
 
     def __str__(self) -> str:
         """ Returns the string representation of the product """
-        return f"{super().__str__()}, Quantity: ∞"
+        super_str = super().__str__()
+        super_str = super_str.replace(f"Quantity: {sys.maxsize}", "Quantity: ∞")
+        return super_str
 
 
 class LimitedProduct(Product):
