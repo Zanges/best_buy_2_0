@@ -252,3 +252,13 @@ def test_limited_product_set_limit_not_integer():
 def test_get_quantity_limited_product():
     product = LimitedProduct("Test Product", 10, 5, 10)
     assert product.get_quantity() == 5
+
+
+def test_comparing_products():
+    product1 = Product("Test Product 1", 10, 5)
+    product2 = Product("Test Product 2", 10, 5)
+    product3 = Product("Test Product 3", 15, 5)
+    assert (product1 == product2) == False
+    assert (product1 == product3) == False
+    assert (product1 < product3) == True
+    assert (product3 > product1) == True

@@ -90,6 +90,23 @@ class Product:
         """ Returns the promotion for the product """
         return self.promotion
 
+    def __eq__(self, other: "Product") -> bool:
+        """ Returns whether the two products are equal """
+        return (self.name == other.name and
+                self.price == other.price and
+                self.quantity == other.quantity and
+                self.active == other.active and
+                self.promotion == other.promotion
+                )
+
+    def __gt__(self, other):
+        """ Returns whether the current product is greater than the other product """
+        return self.price > other.price
+
+    def __lt__(self, other):
+        """ Returns whether the current product is less than the other product """
+        return self.price < other.price
+
 
 class NonStockedProduct(Product):
     def __init__(self, name: str, price: float) -> None:
@@ -169,6 +186,10 @@ class LimitedProduct(Product):
     def get_limit(self) -> int:
         """ Returns the limit of the product """
         return self.limit
+
+    def __eq__(self, other: "LimitedProduct") -> bool:
+        """ Returns whether the two limited products are equal """
+        return super().__eq__(other) and self.limit == other.limit
 
 
 def main():
