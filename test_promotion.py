@@ -1,6 +1,7 @@
 import pytest
 
 from promotion import *
+from products import Product
 
 
 class TestSecondHalfPricePromotion:
@@ -8,12 +9,6 @@ class TestSecondHalfPricePromotion:
         product = Product("Test Product", 100, 100)
         promotion = SecondHalfPricePromotion()
         assert promotion.apply_promotion(product, 10) == 750
-
-    def test_apply_promotion_with_invalid_product(self):
-        promotion = SecondHalfPricePromotion()
-        with pytest.raises(ValueError) as e:
-            promotion.apply_promotion("Test Product", 10)
-        assert str(e.value) == "Product must be of type Product"
 
     def test_apply_promotion_with_invalid_quantity(self):
         product = Product("Test Product", 100, 100)
@@ -49,13 +44,7 @@ class TestThirdOneFreePromotion:
     def test_apply_promotion(self):
         product = Product("Test Product", 100, 100)
         promotion = ThirdOneFreePromotion()
-        assert promotion.apply_promotion(product, 10) == 800
-
-    def test_apply_promotion_with_invalid_product(self):
-        promotion = ThirdOneFreePromotion()
-        with pytest.raises(ValueError) as e:
-            promotion.apply_promotion("Test Product", 10)
-        assert str(e.value) == "Product must be of type Product"
+        assert promotion.apply_promotion(product, 10) == 700
 
     def test_apply_promotion_with_invalid_quantity(self):
         product = Product("Test Product", 100, 100)
@@ -87,12 +76,6 @@ class TestPercentDiscountPromotion:
         product = Product("Test Product", 100, 100)
         promotion = PercentDiscountPromotion(10)
         assert promotion.apply_promotion(product, 10) == 900
-
-    def test_apply_promotion_with_invalid_product(self):
-        promotion = PercentDiscountPromotion(10)
-        with pytest.raises(ValueError) as e:
-            promotion.apply_promotion("Test Product", 10)
-        assert str(e.value) == "Product must be of type Product"
 
     def test_apply_promotion_with_invalid_quantity(self):
         product = Product("Test Product", 100, 100)

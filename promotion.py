@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-from products import Product
-
 
 class Promotion(ABC):
     @abstractmethod
@@ -19,10 +17,8 @@ class Promotion(ABC):
         return self.name
 
     @abstractmethod
-    def apply_promotion(self, product: Product, quantity: int) -> float:
+    def apply_promotion(self, product: "Product", quantity: int) -> float:
         """ Applies the promotion to the product and returns the total cost """
-        if not isinstance(product, Product):
-            raise ValueError("Product must be of type Product")
         if not isinstance(quantity, int):
             raise ValueError("Quantity must be an integer")
         if quantity < 0:
@@ -34,7 +30,7 @@ class SecondHalfPricePromotion(Promotion):
         """ Initializes the second half price promotion with a name, so str() can return a human-readable name """
         super().__init__("Second Half Price!")
 
-    def apply_promotion(self, product: Product, quantity: int) -> float:
+    def apply_promotion(self, product: "Product", quantity: int) -> float:
         """ Applies the second half price promotion to the product and returns the total cost """
         super().apply_promotion(product, quantity)
         if quantity == 0:
@@ -55,7 +51,7 @@ class ThirdOneFreePromotion(Promotion):
         """ Initializes the third one free promotion with a name, so str() can return a human-readable name """
         super().__init__("Third One Free!")
 
-    def apply_promotion(self, product: Product, quantity: int) -> float:
+    def apply_promotion(self, product: "Product", quantity: int) -> float:
         """ Applies the third one free promotion to the product and returns the total cost """
         super().apply_promotion(product, quantity)
         if quantity == 0:
@@ -73,10 +69,14 @@ class ThirdOneFreePromotion(Promotion):
 class PercentDiscountPromotion(Promotion):
     def __init__(self, percent: float):
         """ Initializes the percent discount promotion with a name and a percent discount """
+        if not isinstance(percent, (int, float)):
+            raise ValueError("Discount must be a float")
+        if percent < 0:
+            raise ValueError("Discount must be non-negative")
         super().__init__(f"{percent}% Discount!")
         self.percent = percent
 
-    def apply_promotion(self, product: Product, quantity: int) -> float:
+    def apply_promotion(self, product: "Product", quantity: int) -> float:
         """ Applies the percent discount promotion to the product and returns the total cost """
         super().apply_promotion(product, quantity)
         if quantity == 0:
