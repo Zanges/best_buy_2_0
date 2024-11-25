@@ -87,7 +87,7 @@ def test_order_not_enough_quantity(capsys):
     store = Store([product1, product2])
     assert store.order([(product1, 2), (product2, 3)]) == 60
     printed = capsys.readouterr()
-    assert printed.out == "Error buying Test Product 1, Price: 10, Quantity: 1: Not enough quantity in stock\n"
+    assert printed.out == "Error buying Test Product 1, Price: 10, Quantity: 1, Promotion: None: Not enough quantity in stock\n"
 
 
 def test_store_with_non_product():
@@ -126,4 +126,31 @@ def test_store_with_limited_product(capsys):
     store = Store([product1, product2])
     store.order([(product2, 6)])
     printed = capsys.readouterr()
-    assert printed.out == "Error buying Test Product 2, Price: 20, Quantity: 15, Limit: 5: Quantity must be less than or equal to 5\n"
+    assert printed.out == "Error buying Test Product 2, Price: 20, Quantity: 15, Promotion: None, Limit: 5: Quantity must be less than or equal to 5\n"
+
+
+def test_add_two_stores():
+    product1 = Product("Test Product 1", 10, 5)
+    product2 = Product("Test Product 2", 20, 5)
+    store1 = Store([product1])
+    store2 = Store([product2])
+    store3 = store1 + store2
+    assert store3.products == [product1, product2]
+    assert store1.products == [product1]
+    assert store2.products == [product2]
+
+
+def test_add_two_stores_with_non_product():
+    store1 = Store([])
+    store2 = Store([])
+    store3 = store1 + store2
+    assert store3.products == []
+
+
+def test_in_operator():
+    product1 = Product("Test Product 1", 10, 5)
+    product2 = Product("Test Product 2", 20, 5)
+    store = Store([product1, product2])
+    assert product1 in store
+    assert product2 in store
+    assert Product("Test Product 3", 30, 5) not in store

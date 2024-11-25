@@ -62,6 +62,14 @@ class Store:
 
         return total_cost
 
+    def __add__(self, other: "Store") -> "Store":
+        """ Adds two stores together """
+        return Store(self.products + other.products)
+
+    def __contains__(self, item):
+        """ Checks if a product is in the store """
+        return item in self.products
+
 
 def main():
     product_list = [Product("MacBook Air M2", price=1450, quantity=100),
